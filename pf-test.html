@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8"><title>pf-test</title></head>
+<body><pre id="out">RUNNING</pre>
+<script type="module">
+import * as pagefind from "./pagefind/pagefind.js";
+const queries = ["補助金","補助金診断","補助","助成金","セミナー","司法書士","協会","導入事例","会社概要","研修","メッセージ","ほじょきん","AI研修","宇宙旅行"];
+const out = {};
+try {
+  await pagefind.init();
+  for (const q of queries) {
+    const s = await pagefind.search(q);
+    const rows = [];
+    for (const r of s.results.slice(0, 6)) {
+      const d = await r.data();
+      rows.push({ url: d.url, title: (d.meta && d.meta.title) || "" });
+    }
+    out[q] = { count: s.results.length, top: rows };
+  }
+} catch (e) { out.error = String(e); }
+document.getElementById("out").textContent = JSON.stringify(out, null, 1);
+document.title = "DONE";
+</script></body></html>
